@@ -1,0 +1,29 @@
+{
+	"development": {
+		"username": "root",
+		"password": "root",
+		"database": "todolist",
+		"host": "localhost",
+		"dialect": "mysql",
+		"port": 8889,
+		"timezone": "+07:00"
+	},
+	"test": {
+		"username": "root",
+		"password": "root",
+		"database": "todolist_test",
+		"host": "localhost",
+		"dialect": "mysql",
+		"port": 8889,
+		"timezone": "+07:00"
+	},
+	"production": {
+		"username": "root",
+		"password": "root",
+		"database": "todolist_production",
+		"host": "localhost",
+		"dialect": "mysql",
+		"port": 8889,
+		"timezone": "+07:00"
+	}
+}
