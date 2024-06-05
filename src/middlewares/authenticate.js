@@ -15,21 +15,33 @@ module.exports = async (req, res, next) => {
 			throw new AppError("unauthenticated", 401);
 		}
 
+		//check is token is googleId
+		const userGoogleAccount = await User.findOne({
+			where: { googleId: token }
+		});
+		if (userGoogleAccount) {
+			req.user = userGoogleAccount; // เพิ่ม key ที่ชื่อ user ไว้ใน object req
+			return next(); // ให้วิ่งไปทำงานที่ middlewares ตัวต่อไป
+		}
+
+		//check is token is paylod for userEmailAccount
 		const payload = jwt.verify(
 			token,
 			process.env.JWT_SECRET_KEY || "private_key"
 		);
 
-		const user = await User.findOne({
+		const userEmailAccount = await User.findOne({
 			where: { id: payload.id },
 			attributes: { exclude: "password" }
 		});
-		if (!user) {
-			throw new AppError("unauthenticated", 401);
+		if (userEmailAccount) {
+			req.user = userEmailAccount; // เพิ่ม key ที่ชื่อ user ไว้ใน object req
+			return next(); // ให้วิ่งไปทำงานที่ middlewares ตัวต่อไป
 		}
 
-		req.user = user; // เพิ่ม key ที่ชื่อ user ไว้ใน object req
-		next(); // ให้วิ่งไปทำงานที่ middlewares ตัวต่อไป
+		if (!userGoogleAccount || !userEmailAccount) {
+			throw new AppError("unauthenticated", 401);
+		}
 	} catch (err) {
 		next(err);
 	}

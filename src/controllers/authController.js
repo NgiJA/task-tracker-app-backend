@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/appError");
 const { User } = require("../models");
+const { where } = require("sequelize");
 
 const genToken = (payload) =>
 	jwt.sign(payload, process.env.JWT_SECRET_KEY || "private_key", {
@@ -42,9 +43,10 @@ exports.signup = async (req, res, next) => {
 			firstName: firstName,
 			lastName: lastName,
 			email: email,
-			password: hashedPassword
+			password: hashedPassword,
+			registrationMethod: "email"
 		});
-		// console.log(user);
+
 		res.status(201).json({ message: "success signup" });
 	} catch (err) {
 		next(err);
@@ -67,6 +69,27 @@ exports.login = async (req, res, next) => {
 
 		const token = genToken({ id: user.id });
 		res.status(200).json({ token: token });
+	} catch (err) {
+		next(err);
+	}
+};
+
+exports.googleLogin = async (req, res, next) => {
+	try {
+		const { email, family_name, given_name, sub } = req.body;
+		const user = await User.findOne({ where: { googleId: sub } });
+		if (user) {
+			res.status(200).json({ token: sub });
+		} else {
+			await User.create({
+				firstName: given_name,
+				lastName: family_name,
+				email: email,
+				googleId: sub,
+				registrationMethod: "google"
+			});
+			res.status(200).json({ token: sub });
+		}
 	} catch (err) {
 		next(err);
 	}

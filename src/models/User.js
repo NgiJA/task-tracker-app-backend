@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		},
 		password: {
+			type: DataTypes.STRING
+		},
+		googleId: {
+			type: DataTypes.STRING
+		},
+		registrationMethod: {
 			type: DataTypes.STRING,
 			allowNull: false
 		}

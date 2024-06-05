@@ -1,5 +1,5 @@
 const { sequelize } = require("./models");
-//sequelize.sync({ alter: true });
+// sequelize.sync({ alter: true });
 // const { User } = require("./models");
 
 require("dotenv").config(); // เรียกใช้ทุกอย่างใน .env
