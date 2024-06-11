@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../utils/appError");
 const { User } = require("../models");
 
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
 const genToken = (payload) =>
 	jwt.sign(payload, process.env.JWT_SECRET_KEY || "private_key", {
 		expiresIn: process.env.JWT_EXPIRES || "1d"
@@ -17,6 +19,9 @@ exports.signup = async (req, res, next) => {
 
 		if (!email) {
 			throw new AppError("email is required", 400);
+		}
+		if (!emailRegex.test(email)) {
+			return res.status(400).json({ message: "Invalid email format" });
 		}
 		if (!password) {
 			throw new AppError("password is required", 400);
