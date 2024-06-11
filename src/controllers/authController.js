@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/appError");
 const { User } = require("../models");
-const { where } = require("sequelize");
 
 const genToken = (payload) =>
 	jwt.sign(payload, process.env.JWT_SECRET_KEY || "private_key", {
@@ -13,7 +12,6 @@ const genToken = (payload) =>
 exports.signup = async (req, res, next) => {
 	try {
 		const { firstName, lastName, email, password, confirmPassword } = req.body;
-		// console.log(req.body);
 
 		const isEmail = validator.isEmail(String(email));
 

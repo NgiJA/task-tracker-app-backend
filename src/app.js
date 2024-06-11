@@ -1,6 +1,5 @@
 const { sequelize } = require("./models");
 // sequelize.sync({ alter: true });
-// const { User } = require("./models");
 
 require("dotenv").config(); // เรียกใช้ทุกอย่างใน .env
 const express = require("express");
@@ -11,6 +10,9 @@ const error = require("./middlewares/error");
 
 const authRouteUser = require("./routes/authRoute");
 const featureRoute = require("./routes/featureRoute");
+const emailRoute = require("./routes/emailRoute");
+const otpRoute = require("./routes/otpRoute");
+const passwordRoute = require("./routes/passwordRoute");
 const authenticate = require("./middlewares/authenticate");
 
 const app = express();
@@ -34,35 +36,17 @@ const initMySQL = async () => {
 	await conn.query("SET time_zone = '+07:00'");
 };
 
-// app.get("/users", async (req, res) => {
-// 	try {
-// 		const results = await conn.query("SELECT * FROM users");
-// 		res.json(results[0]);
-// 	} catch (err) {
-// 		console.log("Error fetching users: ", error.message);
-// 		res.status(500).json({ error: "Error fetching users" });
-// 	}
-// });
-
-// app.get("/users", async (req, res) => {
-// 	try {
-// 		const users = await User.findAll();
-// 		res.status(200).json({ users: users });
-// 	} catch (err) {
-// 		console.log("Error fetching users: ", error.message);
-// 		res.status(500).json({ error: "Error fetching users" });
-// 	}
-// });
-
 app.use("/auth", authRouteUser);
 app.use("/feature", authenticate, featureRoute);
+app.use("/email", emailRoute);
+app.use("/otp", otpRoute);
+app.use("/password", passwordRoute);
 
 app.use(notFound);
 app.use(error);
 
 const port = process.env.PORT || 8000;
 
-//app.listen(port, () => console.log(`server running on port: ${port}`));
 app.listen(port, async (req, res) => {
 	await initMySQL();
 	console.log(`server running on port: ${port}`);
